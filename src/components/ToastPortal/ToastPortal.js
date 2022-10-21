@@ -29,23 +29,22 @@ export const ToastPortal = forwardRef(
 
         useEffect(() => {
             if (autoClose && toasts.length) {
-                if (!toastRef.current) {
-                    toastRef.current = setTimeout(() => {
-                        const id = toasts[toasts.length - 1].id;
-                        setRemoving(id);
-                    }, autoCloseTime);
-                }
+                setTimeout(() => {
+                    const id = toasts[toasts.length - 1].id;
+                    setRemoving(id);
+                }, autoCloseTime);
             } else {
-                if (toastRef.current) {
-                    clearTimeout(toastRef.current);
-                    toastRef.current = null;
-                }
+                clearTimeout(toastRef.current);
+                toastRef.current = null;
             }
+        }, [toasts, autoClose, autoCloseTime]);
+
+        useEffect(() => {
             return () => {
                 clearTimeout(toastRef.current);
                 toastRef.current = null;
             };
-        }, [toasts, autoClose, autoCloseTime]);
+        }, []);
 
         const removeToast = (id) => {
             setToasts(toasts.filter((t) => t.id !== id));
