@@ -59,7 +59,7 @@ export const App = () => {
                     <button>Submit</button>
                 </form>
             </div>
-            <ToastPortal ref={toastRef} addToast={() => {}} />
+            <ToastPortal ref={toastRef} autoClose={autoClose} />
         </div>
     );
 };
