@@ -1,13 +1,7 @@
-import { useToastPortal } from 'hooks';
+import { useToastPortal, useToastAutoClose } from 'hooks';
 import ReactDOM from 'react-dom';
 import styles from './styles.module.css';
-import {
-    forwardRef,
-    useEffect,
-    useImperativeHandle,
-    useRef,
-    useState,
-} from 'react';
+import { forwardRef, useImperativeHandle, useState } from 'react';
 import { Toast } from '../Toast';
 import { uuidv4 } from '../../shared';
 
@@ -15,44 +9,17 @@ export const ToastPortal = forwardRef(
     ({ autoClose, autoCloseTime = 5000 }, ref) => {
         const [toasts, setToasts] = useState([]);
         const { loaded, portalId } = useToastPortal();
-        const [removing, setRemoving] = useState('');
-
-        const toastRef = useRef();
-
-        useEffect(() => {
-            if (removing) {
-                setToasts((toast) =>
-                    toast.filter((_toast) => _toast.id !== removing),
-                );
-            }
-        }, [removing]);
-
-        useEffect(() => {
-            if (autoClose && toasts.length) {
-                setTimeout(() => {
-                    const id = toasts[toasts.length - 1].id;
-                    setRemoving(id);
-                }, autoCloseTime);
-            } else {
-                clearTimeout(toastRef.current);
-                toastRef.current = null;
-            }
-        }, [toasts, autoClose, autoCloseTime]);
-
-        useEffect(() => {
-            return () => {
-                clearTimeout(toastRef.current);
-                toastRef.current = null;
-            };
-        }, []);
 
         const removeToast = (id) => {
             setToasts(toasts.filter((t) => t.id !== id));
         };
 
-        // const addMessage = (toast) => {
-        //     setToasts([...toasts, { ...toast, id: uuidv4() }]);
-        // };
+        useToastAutoClose({
+            toasts,
+            setToasts,
+            autoClose,
+            autoCloseTime,
+        });
 
         useImperativeHandle(ref, () => ({
             addMessage(toast) {
